@@ -64,8 +64,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndToolBar);
-
-
 	return 0;
 }
 
@@ -106,7 +104,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CMyView), CSize(200, 50), pContext);
 	m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CSDIAppView), CSize(0, 0), pContext);
 
-	m_wndSplitter.SetColumnInfo(0, 400, 10);
+	m_wndSplitter.SetColumnInfo(0, 200, 10);
 
 	SetActiveView((CView*)m_wndSplitter.GetPane(0,1));
 

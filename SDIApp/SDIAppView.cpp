@@ -56,6 +56,15 @@ void CSDIAppView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+	CRect rect;
+	int pictSize = 48;
+	int paddingHeight, paddingWidth;
+	GetClientRect(rect);
+	
+	paddingHeight = (rect.Height() - pictSize * 10) / 2;
+	paddingWidth = (rect.Width() - pictSize * 10) / 2;
+
 	if (m_bShipsDraw)
 	{
 
@@ -64,10 +73,12 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			for (int j = 0; j < 10; j++)
 			{
 				CBitmap bitmap;
+				//bitmap.LoadBitmap(IDB_BITMAP1);
+				
 				if (i % 2 == 0 && j % 2 == 0)
-					bitmap.LoadBitmap(IDB_BITMAP_SHIP);
+					bitmap.LoadBitmap(IDB_BITMAP_SHIP2);
 				else
-					bitmap.LoadBitmap(IDB_BITMAP_SEA);
+					bitmap.LoadBitmap(IDB_BITMAP_SEA2);
 
 				CDC memdc;
 				memdc.CreateCompatibleDC(pDC);
@@ -75,7 +86,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 
 				BITMAP BitMap;
 				bitmap.GetBitmap(&BitMap);
-				pDC->BitBlt(50 + i * BitMap.bmWidth, 50 + j * BitMap.bmHeight, BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
+				pDC->BitBlt(paddingWidth + i * BitMap.bmWidth, paddingHeight + j * BitMap.bmHeight, BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
 
 				pDC->SelectObject(oldbmp);
 			}
@@ -99,7 +110,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 
 				BITMAP BitMap;
 				bitmap.GetBitmap(&BitMap);
-				pDC->BitBlt(50 + i * BitMap.bmWidth, 50 + j * BitMap.bmHeight, BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
+				pDC->BitBlt(paddingWidth + i * BitMap.bmWidth, paddingHeight + j * BitMap.bmHeight, BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
 
 				pDC->SelectObject(oldbmp);
 			}

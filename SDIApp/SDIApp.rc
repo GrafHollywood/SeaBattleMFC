@@ -87,6 +87,10 @@ IDB_BITMAP_SEA          BITMAP                  "res\\bitmap_s.bmp"
 
 IDB_BITMAP_BANG         BITMAP                  "res\\bmp00001.bmp"
 
+IDB_BITMAP_SHIP2        BITMAP                  "res\\bmp00002.bmp"
+
+IDB_BITMAP_SEA2         BITMAP                  "res\\bitmap2.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
