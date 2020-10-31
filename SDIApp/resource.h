@@ -11,15 +11,16 @@
 #define IDB_BITMAP_SEA1                 312
 #define IDB_BITMAP_BANG                 312
 #define IDB_BITMAP1                     313
-#define IDB_BITMAP_SHIP2                313
-#define IDB_BITMAP2                     315
-#define IDB_BITMAP_SEA2                 315
+#define IDB_BITMAP_SHIP2                318
+#define IDB_BITMAP_BANG2                319
+#define IDB_BITMAP2                     320
+#define IDB_BITMAP_SEA2                 320
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310

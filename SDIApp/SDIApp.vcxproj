@@ -217,6 +217,7 @@
     <Image Include="res\bitmap_s.bmp" />
     <Image Include="res\bmp00001.bmp" />
     <Image Include="res\bmp00002.bmp" />
+    <Image Include="res\bmp00003.bmp" />
     <Image Include="res\SDIApp.ico" />
     <Image Include="res\SDIAppDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
