@@ -81,17 +81,13 @@ IDR_SDIAppTYPE          ICON                    "res\\SDIAppDoc.ico"
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
-IDB_BITMAP_SHIP         BITMAP                  "res\\bitmap1.bmp"
-
-IDB_BITMAP_SEA          BITMAP                  "res\\bitmap_s.bmp"
-
-IDB_BITMAP_BANG         BITMAP                  "res\\bmp00001.bmp"
-
 IDB_BITMAP_SHIP2        BITMAP                  "res\\bmp00003.bmp"
 
 IDB_BITMAP_BANG2        BITMAP                  "res\\bmp00002.bmp"
 
 IDB_BITMAP_SEA2         BITMAP                  "res\\bitmap2.bmp"
+
+IDB_BITMAP_BANG_SEA     BITMAP                  "res\\bmp00004.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -153,6 +149,10 @@ BEGIN
     BEGIN
         MENUITEM "&О проекте SDIApp...",        ID_APP_ABOUT
     END
+    POPUP "&Игра"
+    BEGIN
+        MENUITEM "&Начать",                     ID_BEGIN
+    END
 END
 
 
@@ -194,6 +194,22 @@ BEGIN
     LTEXT           "SDIApp, версия 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2020",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "ОК",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_PLACESHIP_DLG DIALOGEX 0, 0, 341, 126
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Расстановка кораблей"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COMBO_TYPE,7,7,137,78,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Горизонтально",IDC_RADIO_HORIZONTAL,"Button",BS_AUTORADIOBUTTON,7,30,67,10
+    CONTROL         "Вертикально",IDC_RADIO_VERTICAL,"Button",BS_AUTORADIOBUTTON,7,40,60,10
+    PUSHBUTTON      "ПОСТАВИТЬ",IDC_BUTTON_PLACE,69,97,65,22,BS_CENTER | BS_VCENTER
+    COMBOBOX        IDC_COMBO_LETTER,7,57,34,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_NUM,7,74,33,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Начальная координата корабля",IDC_STATIC,47,58,148,29,SS_CENTERIMAGE
+    LTEXT           "Тип корабля",IDC_STATIC,149,9,43,8
+    CTEXT           "Поставьте корабль",IDC_STATIC_OUT,209,44,125,53,SS_CENTERIMAGE
 END
 
 
@@ -251,8 +267,89 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END
+
+    IDD_PLACESHIP_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 334
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 119
+    END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_PLACESHIP_DLG DLGINIT
+BEGIN
+    IDC_COMBO_TYPE, 0x403, 18, 0
+0xe8cb, 0xeaed, 0xf0ee, 0x2820, 0x2034, 0xebea, 0xf2e5, 0xe8ea, 0x0029, 
+
+    IDC_COMBO_TYPE, 0x403, 19, 0
+0xf0ca, 0xe9e5, 0xe5f1, 0x20f0, 0x3328, 0xea20, 0xe5eb, 0xeaf2, 0x29e8, 
+"\000" 
+    IDC_COMBO_TYPE, 0x403, 19, 0
+0xf1dd, 0xe8ec, 0xe5ed, 0x20f6, 0x3228, 0xea20, 0xe5eb, 0xeaf2, 0x29e8, 
+"\000" 
+    IDC_COMBO_TYPE, 0x403, 17, 0
+0xe0ca, 0xe5f2, 0x20f0, 0x3128, 0xea20, 0xe5eb, 0xeaf2, 0x29e0, "\000" 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0041, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0042, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0043, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0044, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0045, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0046, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0047, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0048, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x0049, 
+    IDC_COMBO_LETTER, 0x403, 2, 0
+0x004a, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0038, 
+    IDC_COMBO_NUM, 0x403, 2, 0
+0x0039, 
+    IDC_COMBO_NUM, 0x403, 3, 0
+0x3031, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_PLACESHIP_DLG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

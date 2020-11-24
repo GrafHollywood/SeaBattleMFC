@@ -1,7 +1,8 @@
 
 // SDIAppView.h : интерфейс класса CSDIAppView
 //
-
+#define IS_DRAW_SHIP 1
+#define IS_DRAW_ENEMY 2
 #pragma once
 
 class CSDIAppDoc;
@@ -18,7 +19,7 @@ public:
 
 // Операции
 public:
-	bool m_bShipsDraw = true;
+	int m_bShipsDraw = IS_DRAW_SHIP;
 
 // Переопределение
 public:

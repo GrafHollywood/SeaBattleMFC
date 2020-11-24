@@ -33,7 +33,6 @@ END_MESSAGE_MAP()
 CSDIAppView::CSDIAppView()
 {
 	// TODO: добавьте код создания
-
 }
 
 CSDIAppView::~CSDIAppView()
@@ -44,7 +43,6 @@ BOOL CSDIAppView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: изменить класс Window или стили посредством изменения
 	//  CREATESTRUCT cs
-
 	return CView::PreCreateWindow(cs);
 }
 
@@ -118,7 +116,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 	}
 
 	//вывод изображений
-	if (m_bShipsDraw)
+	if (m_bShipsDraw == IS_DRAW_SHIP)
 	{
 		for (int i = 0; i < 10; i++)
 		{
@@ -142,7 +140,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			}
 		}
 	}
-	else
+	else if (m_bShipsDraw == IS_DRAW_ENEMY)
 	{
 		for (int i = 0; i < 10; i++)
 		{
@@ -160,7 +158,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 
 				BITMAP BitMap;
 				bitmap.GetBitmap(&BitMap);
-				pDC->BitBlt(paddingWidth + i * BitMap.bmWidth, paddingHeight + j * BitMap.bmHeight, BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
+				pDC->BitBlt(paddingWidth + i * (BitMap.bmWidth + 1), paddingHeight + j * (BitMap.bmHeight + 1), BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
 
 				pDC->SelectObject(oldbmp);
 			}

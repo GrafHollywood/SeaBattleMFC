@@ -22,7 +22,8 @@ CMyView::~CMyView()
 
 BEGIN_MESSAGE_MAP(CMyView, CTreeView)
 	ON_WM_CREATE()
-	ON_WM_LBUTTONDOWN()
+//	ON_WM_LBUTTONDOWN()
+ON_NOTIFY_REFLECT(TVN_SELCHANGED, &CMyView::OnTvnSelchanged)
 END_MESSAGE_MAP()
 
 
@@ -51,15 +52,15 @@ void CMyView::UpdateTree()
 
 	tree.DeleteAllItems();
 
-	m_hRoot = tree.InsertItem(L"Виды", -1, -1, NULL, TVI_FIRST);
+	m_hViews = tree.InsertItem(L"Виды", -1, -1, NULL, TVI_FIRST);
 
-	m_hItem1 = tree.InsertItem(L"Расстановка", -1, -1, m_hRoot, TVI_LAST);
-	m_hItem2 = tree.InsertItem(L"Стрелялка", -1, -1, m_hRoot, TVI_LAST);
+	m_hShip = tree.InsertItem(L"Расстановка", -1, -1, m_hViews, TVI_LAST);
+	m_hEnemy = tree.InsertItem(L"Стрелялка", -1, -1, m_hViews, TVI_LAST);
 
-	tree.Expand(m_hRoot, TVE_EXPAND);
+	tree.Expand(m_hViews, TVE_EXPAND);
 
-	tree.SetItemData(m_hItem1, 1);
-	tree.SetItemData(m_hItem2, 0);
+	tree.SetItemData(m_hShip, IS_DRAW_SHIP);
+	tree.SetItemData(m_hEnemy, IS_DRAW_ENEMY);
 }
 
 
@@ -77,18 +78,24 @@ int CMyView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 
-void CMyView::OnLButtonDown(UINT nFlags, CPoint point)
+
+void CMyView::OnTvnSelchanged(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
-	CTreeCtrl &tree = GetTreeCtrl();
-
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	// TODO: добавьте свой код обработчика уведомлений
+	CTreeCtrl& tree = GetTreeCtrl();
 	HTREEITEM sel = tree.GetSelectedItem();
+	int i = tree.GetItemData(sel);
 
+	if (tree.GetItemData(sel) == IS_DRAW_SHIP)
+	{
+		pDoc->m_pView->m_bShipsDraw = IS_DRAW_SHIP;
+	}
+	else if (tree.GetItemData(sel) == IS_DRAW_ENEMY)
+	{
+		pDoc->m_pView->m_bShipsDraw = IS_DRAW_ENEMY;
+	}
 	
-
-	pDoc->m_pView->m_bShipsDraw = tree.GetItemData(sel) != 1;
-
 	pDoc->m_pView->Invalidate(FALSE);
-
-	CTreeView::OnLButtonDown(nFlags, point);
+	*pResult = 0;
 }

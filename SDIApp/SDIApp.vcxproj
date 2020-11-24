@@ -182,6 +182,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CPlaceShipDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MyView.h" />
     <ClInclude Include="Resource.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CPlaceShipDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MyView.cpp" />
     <ClCompile Include="SDIApp.cpp" />
@@ -218,6 +220,7 @@
     <Image Include="res\bmp00001.bmp" />
     <Image Include="res\bmp00002.bmp" />
     <Image Include="res\bmp00003.bmp" />
+    <Image Include="res\bmp00004.bmp" />
     <Image Include="res\SDIApp.ico" />
     <Image Include="res\SDIAppDoc.ico" />
     <Image Include="res\Toolbar.bmp" />

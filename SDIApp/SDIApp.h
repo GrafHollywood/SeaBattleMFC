@@ -19,7 +19,6 @@ class CSDIAppApp : public CWinApp
 public:
 	CSDIAppApp();
 
-
 // Переопределение
 public:
 	virtual BOOL InitInstance();

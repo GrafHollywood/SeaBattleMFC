@@ -13,7 +13,7 @@ protected:
 	virtual ~CMyView();
 
 public:
-	HTREEITEM m_hRoot, m_hItem1, m_hItem2;
+	HTREEITEM m_hViews, m_hShip, m_hEnemy;
 
 	CSDIAppDoc * pDoc;
 
@@ -30,7 +30,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnTvnSelchanged(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 

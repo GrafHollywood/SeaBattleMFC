@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include <winsock.h>
 // SHARED_HANDLERS можно определить в обработчиках фильтров просмотра реализации проекта ATL, эскизов
 // и поиска; позволяет совместно использовать код документа в данным проекте.
 #ifndef SHARED_HANDLERS
@@ -10,18 +11,21 @@
 #endif
 
 #include "SDIAppDoc.h"
-
 #include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+#define SERVERADDR "127.0.0.1"
+
 // CSDIAppDoc
 
 IMPLEMENT_DYNCREATE(CSDIAppDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CSDIAppDoc, CDocument)
+	//	ON_COMMAND(AFX_ID_PREVIEW_PREV, &CSDIAppDoc::OnAfxIdPreviewPrev)
+	ON_COMMAND(ID_BEGIN, &CSDIAppDoc::OnBegin)
 END_MESSAGE_MAP()
 
 
@@ -30,8 +34,17 @@ END_MESSAGE_MAP()
 CSDIAppDoc::CSDIAppDoc()
 {
 	// TODO: добавьте код для одноразового вызова конструктора
-	
-
+	//заполним по умолчанию акваторию игрока и противника пустыми клетками (0)
+	for (int i = 0; i < 10; i++)
+	{
+		vector<int> array;
+		for (int j = 0; j < 10; j++)
+		{
+			array.push_back(0);
+		}
+		m_MyAqua.push_back(array);
+		m_EnemyAqua.push_back(array);
+	}
 }
 
 CSDIAppDoc::~CSDIAppDoc()
@@ -54,7 +67,7 @@ BOOL CSDIAppDoc::OnNewDocument()
 	}*/
 
 	m_pTree->UpdateTree();
-
+	//m_dPlaceShipDlg.DoModal();
 
 	return TRUE;
 }
@@ -66,7 +79,7 @@ BOOL CSDIAppDoc::OnNewDocument()
 
 void CSDIAppDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
+	/*if (ar.IsStoring())
 	{
 		// TODO: добавьте код сохранения
 		size_t count = m_Points.size();
@@ -92,7 +105,7 @@ void CSDIAppDoc::Serialize(CArchive& ar)
 			ar >> point.y;
 			m_Points.push_back(point);
 		}
-	}
+	}*/
 }
 
 #ifdef SHARED_HANDLERS
@@ -106,7 +119,7 @@ void CSDIAppDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
 	CString strText = _T("TODO: implement thumbnail drawing here");
 	LOGFONT lf;
 
-	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	pDefaultGUIFont->GetLogFont(&lf);
 	lf.lfHeight = 36;
 
@@ -137,7 +150,7 @@ void CSDIAppDoc::SetSearchContent(const CString& value)
 	}
 	else
 	{
-		CMFCFilterChunkValueImpl *pChunk = NULL;
+		CMFCFilterChunkValueImpl* pChunk = NULL;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
 		if (pChunk != NULL)
 		{
@@ -165,3 +178,84 @@ void CSDIAppDoc::Dump(CDumpContext& dc) const
 
 
 // команды CSDIAppDoc
+
+
+bool CSDIAppDoc::ConnectServer(int port)
+{
+	// TODO: Добавьте сюда код реализации.
+	//проверка чтобы не подключиться второй раз
+	if (!send(m_Socket, NULL, 0, 0))
+	{
+		MessageBox(NULL, _T("Вы уже подключены к серверу"), _T("Ошибка"), MB_ICONWARNING);
+		return false;
+	}
+
+	WSAData wsaData;
+	//если ошибка инициализации библиотеки Winsock
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData))
+	{
+		MessageBox(NULL, _T("Ошибка инициализации бибилиотеки"), _T("Ошибка"), MB_ICONWARNING);
+		return false;
+	}
+
+	m_Socket = socket(AF_INET, SOCK_STREAM, 0);
+	//если произошла ошибка создания сокета
+	if (m_Socket < 0)
+	{
+		MessageBox(NULL, _T("Ошибка создания сокета"), _T("Ошибка"), MB_ICONWARNING);
+		WSACleanup();
+		return false;
+	}
+
+	sockaddr_in dest_addr;
+	dest_addr.sin_family = AF_INET;
+	dest_addr.sin_port = htons(port);
+	if (inet_addr(SERVERADDR) != INADDR_NONE)
+		dest_addr.sin_addr.s_addr = inet_addr(SERVERADDR);
+	else
+	{
+		//некорректный адрес
+		MessageBox(NULL, _T("Некорректный адрес"), _T("Ошибка"), MB_ICONERROR);
+		closesocket(m_Socket);
+		WSACleanup();
+		return false;
+	}
+	// адрес сервера получен – пытаемся установить соединение
+	if (connect(m_Socket, (sockaddr*)&dest_addr, sizeof(dest_addr)))
+	{
+		//неудалось подключится
+		MessageBox(NULL, _T("Не удалось подключиться к серверу"), _T("Ошибка"), MB_ICONERROR);
+		closesocket(m_Socket);
+		WSACleanup();
+		return false;
+	}
+	return true;
+}
+
+
+void CSDIAppDoc::OnBegin()
+{
+	// TODO: добавьте свой код обработчика команд
+	if (!ConnectServer(10000))
+		return;
+
+	MessageBox(NULL, _T("Успешное подключение. Ожидание противника."), _T("Подключено"), NULL);
+
+	//ожидание ответа от сервера, что соперник найдет и нужно расставлять корабли
+	char buf[1024];
+	CString string;
+	while (recv(m_Socket, buf, sizeof(buf), 0))
+	{
+		string = buf;
+		if ((string == "Расставляйте корабли!"))
+		{
+			MessageBox(NULL, _T("Расставляйте корабли!"), _T("Рассталяйте"), NULL);
+			break;
+		}
+		MessageBox(NULL, _T("Противник найден, он расставляет корабли"), _T("Ждите"), NULL);
+	}
+
+	//char baf[1024] = "4(A4,B4,C4,D4)";
+	//send(m_Socket, baf, 1024, 0);
+	m_dPlaceShipDlg.DoModal();
+}
