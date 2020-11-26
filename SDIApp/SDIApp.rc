@@ -81,13 +81,13 @@ IDR_SDIAppTYPE          ICON                    "res\\SDIAppDoc.ico"
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
-IDB_BITMAP_SHIP2        BITMAP                  "res\\bmp00003.bmp"
+IDB_BITMAP_SHIP         BITMAP                  "res\\bmp00003.bmp"
 
-IDB_BITMAP_BANG2        BITMAP                  "res\\bmp00002.bmp"
+IDB_BITMAP_BANG         BITMAP                  "res\\bmp00002.bmp"
 
-IDB_BITMAP_SEA2         BITMAP                  "res\\bitmap2.bmp"
+IDB_BITMAP_SEA          BITMAP                  "res\\bitmap2.bmp"
 
-IDB_BITMAP_BANG_SEA     BITMAP                  "res\\bmp00004.bmp"
+IDB_BITMAP_MISS         BITMAP                  "res\\bmp00004.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

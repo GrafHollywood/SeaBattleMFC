@@ -123,10 +123,14 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			for (int j = 0; j < 10; j++)
 			{
 				CBitmap bitmap;
-				if (i % 2 == 0 && j % 2 == 0)
-					bitmap.LoadBitmap(IDB_BITMAP_SHIP2);
-				else
-					bitmap.LoadBitmap(IDB_BITMAP_SEA2);
+				if (pDoc->m_MyAqua[i][j] == CELL_SHIP)
+					bitmap.LoadBitmap(IDB_BITMAP_SHIP);
+				else if (pDoc->m_MyAqua[i][j] == CELL_EMPTY)
+					bitmap.LoadBitmap(IDB_BITMAP_SEA);
+				else if (pDoc->m_MyAqua[i][j] == CELL_MISS)
+					bitmap.LoadBitmap(IDB_BITMAP_MISS);
+				else if (pDoc->m_MyAqua[i][j] == CELL_SHOT)
+					bitmap.LoadBitmap(IDB_BITMAP_BANG);
 
 				CDC memdc;
 				memdc.CreateCompatibleDC(pDC);
@@ -134,7 +138,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 
 				BITMAP BitMap;
 				bitmap.GetBitmap(&BitMap);
-				pDC->BitBlt(paddingWidth + i * (BitMap.bmWidth + 1), paddingHeight + j * (BitMap.bmHeight + 1), BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
+				pDC->BitBlt(paddingWidth + j * (BitMap.bmWidth + 1), paddingHeight + i * (BitMap.bmHeight + 1), BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
 
 				pDC->SelectObject(oldbmp);
 			}
@@ -147,10 +151,14 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			for (int j = 0; j < 10; j++)
 			{
 				CBitmap bitmap;
-				if (i % 2 == 0 && j % 2 == 0)
-					bitmap.LoadBitmap(IDB_BITMAP_BANG2);
-				else
-					bitmap.LoadBitmap(IDB_BITMAP_SEA2);
+				if (pDoc->m_MyAqua[i][j] == CELL_SHIP)
+					bitmap.LoadBitmap(IDB_BITMAP_SHIP);
+				else if (pDoc->m_MyAqua[i][j] == CELL_EMPTY)
+					bitmap.LoadBitmap(IDB_BITMAP_SEA);
+				else if (pDoc->m_MyAqua[i][j] == CELL_MISS)
+					bitmap.LoadBitmap(IDB_BITMAP_MISS);
+				else if (pDoc->m_MyAqua[i][j] == CELL_SHOT)
+					bitmap.LoadBitmap(IDB_BITMAP_BANG);
 
 				CDC memdc;
 				memdc.CreateCompatibleDC(pDC);

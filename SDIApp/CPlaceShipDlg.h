@@ -1,7 +1,14 @@
 ﻿#pragma once
+#include <vector>
 
 class CSDIAppDoc;
 // Диалоговое окно CPlaceShipDlg
+
+struct Cell
+{
+	int Letter;
+	int Num;
+};
 
 class CPlaceShipDlg : public CDialogEx
 {
@@ -28,9 +35,16 @@ public:
 	// координата цифра
 	int m_iNum;
 	// координата буква
-	bool m_bIsHorizontal;
+	bool m_bIsHorizontal = true;
 	afx_msg void OnBnClickedRadioHorizontal();
 	afx_msg void OnBnClickedRadioVertical();
 	CString m_sLetter;
 	CString m_sOut;
+	int LetterToCoord(char letter);
+	char CoordToLetter(int coord);
+	int n4size = 1,
+		n3size = 2,
+		n2size = 3,
+		n1size = 4;
+	virtual void OnCancel();
 };

@@ -40,7 +40,7 @@ CSDIAppDoc::CSDIAppDoc()
 		vector<int> array;
 		for (int j = 0; j < 10; j++)
 		{
-			array.push_back(0);
+			array.push_back(CELL_EMPTY);
 		}
 		m_MyAqua.push_back(array);
 		m_EnemyAqua.push_back(array);
@@ -67,7 +67,6 @@ BOOL CSDIAppDoc::OnNewDocument()
 	}*/
 
 	m_pTree->UpdateTree();
-	//m_dPlaceShipDlg.DoModal();
 
 	return TRUE;
 }
@@ -235,6 +234,7 @@ bool CSDIAppDoc::ConnectServer(int port)
 
 void CSDIAppDoc::OnBegin()
 {
+	//m_dPlaceShipDlg.DoModal();
 	// TODO: добавьте свой код обработчика команд
 	if (!ConnectServer(10000))
 		return;

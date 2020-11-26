@@ -7,12 +7,16 @@
 #define IDR_MAINFRAME                   128
 #define IDR_SDIAppTYPE                  130
 #define IDB_BITMAP_SEA1                 312
+#define IDB_BITMAP_SEA                  312
 #define IDB_BITMAP1                     313
 #define IDB_BITMAP_SHIP2                318
+#define IDB_BITMAP_SHIP                 318
 #define IDB_BITMAP_BANG2                319
+#define IDB_BITMAP_BANG                 319
 #define IDB_BITMAP_SEA2                 320
 #define IDD_PLACESHIP_DLG               321
 #define IDB_BITMAP_BANG_SEA             324
+#define IDB_BITMAP_MISS                 324
 #define IDC_COMBO_TYPE                  1000
 #define IDC_RADIO_HORIZONTAL            1002
 #define IDC_RADIO_VERTICAL              1003

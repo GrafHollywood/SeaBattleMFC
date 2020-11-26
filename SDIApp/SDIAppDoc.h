@@ -9,9 +9,9 @@
 #pragma once
 
 #define CELL_EMPTY 0
-#define CELL_SHIP_LIVE 1
-#define CELL_SHIP_SHOT 2
-#define CELL_EMPTY_SHOT 3
+#define CELL_SHIP 1
+#define CELL_SHOT 2
+#define CELL_MISS 3
 
 using namespace std;
 
