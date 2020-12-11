@@ -5,6 +5,7 @@
 #include "MyView.h"
 #include "SDIAppView.h"
 #include "CPlaceShipDlg.h"
+#include "CAcceptDlg.h"
 
 #pragma once
 
@@ -23,21 +24,25 @@ protected: // создать только из сериализации
 // Атрибуты
 public:
 	//bool m_b;
-	CMyView *m_pTree;
-	CSDIAppView *m_pView;
-	CPlaceShipDlg m_dPlaceShipDlg;
+	CMyView *m_pTree; //дерево
+	CSDIAppView *m_pView; //игровое поле
+	CPlaceShipDlg m_dPlaceShipDlg; //диалог расстановки кораблей
+	CAcceptDlg m_dAcceprDlg; //диалог принятия игры
 
 	SOCKET m_Socket; //сокет для отправки и получение запросов сервера
 
-	vector<vector<int>> m_MyAqua;
-	vector<vector<int>> m_EnemyAqua;
+	vector<vector<int>> m_MyAqua; //сетка акватории игрока
+	vector<vector<int>> m_EnemyAqua; //сетка акватории противника
+
+	int m_iShip4 = 0, m_iShip3 = 0, m_iShip2 = 0, m_iShip1 = 0; //кол-во кораблей на поле
+	bool m_bIsConnect = false;
 // Операции
 public:
 
 // Переопределение
 public:
 	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+//	virtual void Serialize(CArchive& ar);
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
@@ -64,4 +69,5 @@ protected:
 public:
 	bool ConnectServer(int port);
 	afx_msg void OnBegin();
+	static void WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc);
 };

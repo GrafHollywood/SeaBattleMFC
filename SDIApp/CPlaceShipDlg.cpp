@@ -41,8 +41,6 @@ CPlaceShipDlg::~CPlaceShipDlg()
 void CPlaceShipDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	CFrameWnd* pFrame = (CFrameWnd*)AfxGetApp()->m_pMainWnd;
-	m_pDoc = (CSDIAppDoc*)pFrame->GetActiveDocument();
 	DDX_CBString(pDX, IDC_COMBO_TYPE, m_sType);
 	DDX_CBIndex(pDX, IDC_COMBO_NUM, m_iNum);
 	DDX_CBString(pDX, IDC_COMBO_LETTER, m_sLetter);
@@ -64,6 +62,7 @@ END_MESSAGE_MAP()
 void CPlaceShipDlg::OnBnClickedButtonPlace()
 {
 	// TODO: добавьте свой код обработчика уведомлений
+
 	UpdateData(TRUE);
 	if (m_sLetter == L"" || m_sType == L"")
 	{
@@ -72,13 +71,13 @@ void CPlaceShipDlg::OnBnClickedButtonPlace()
 		return;
 	}
 
-	int size;
+	int size = 0;
 
 
 	if (m_sType.Find('4') != -1)
 	{
 		size = 4;
-		if (n4size <=0)
+		if (m_pDoc->m_iShip4 >= 1)
 		{
 			m_sOut = "Все 4-хпалублые корабли расставлены";
 			UpdateData(FALSE);
@@ -88,7 +87,7 @@ void CPlaceShipDlg::OnBnClickedButtonPlace()
 	else if (m_sType.Find('3') != -1)
 	{
 		size = 3;
-		if (n3size <= 0)
+		if (m_pDoc->m_iShip3 >= 2)
 		{
 			m_sOut = "Все 3-хпалублые корабли расставлены";
 			UpdateData(FALSE);
@@ -98,7 +97,7 @@ void CPlaceShipDlg::OnBnClickedButtonPlace()
 	else if (m_sType.Find('2') != -1)
 	{
 		size = 2;
-		if (n2size <= 0)
+		if (m_pDoc->m_iShip2 >= 3)
 		{
 			m_sOut = "Все 2-хпалублые корабли расставлены";
 			UpdateData(FALSE);
@@ -108,7 +107,7 @@ void CPlaceShipDlg::OnBnClickedButtonPlace()
 	else if (m_sType.Find('1') != -1)
 	{
 		size = 1;
-		if (n1size <= 0)
+		if (m_pDoc->m_iShip1 >= 4)
 		{
 			m_sOut = "Все 1-палублые корабли расставлены";
 			UpdateData(FALSE);
@@ -220,16 +219,16 @@ void CPlaceShipDlg::OnBnClickedButtonPlace()
 		switch (size)
 		{
 		case 1:
-			n1size--;
+			m_pDoc->m_iShip1++;
 			break;
 		case 2:
-			n2size--;
+			m_pDoc->m_iShip2++;
 			break;
 		case 3:
-			n3size--;
+			m_pDoc->m_iShip3++;
 			break;
 		case 4:
-			n4size--;
+			m_pDoc->m_iShip4++;
 			break;
 		}
 	}
@@ -329,4 +328,16 @@ void CPlaceShipDlg::OnCancel()
 	// TODO: добавьте специализированный код или вызов базового класса
 
 	CDialogEx::OnCancel();
+}
+
+
+BOOL CPlaceShipDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  Добавить дополнительную инициализацию
+	CFrameWnd* pFrame = (CFrameWnd*)AfxGetApp()->m_pMainWnd;
+	m_pDoc = (CSDIAppDoc*)pFrame->GetActiveDocument();
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // Исключение: страница свойств OCX должна возвращать значение FALSE
 }

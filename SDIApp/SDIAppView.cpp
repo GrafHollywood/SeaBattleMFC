@@ -26,6 +26,7 @@ BEGIN_MESSAGE_MAP(CSDIAppView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 // создание/уничтожение CSDIAppView
@@ -59,7 +60,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 	int pictSize = 48;
 	int paddingHeight, paddingWidth;
 	GetClientRect(rect);
-	
+
 	paddingHeight = (rect.Height() - pictSize * 10) / 2;
 	paddingWidth = (rect.Width() - pictSize * 10) / 2;
 
@@ -219,3 +220,35 @@ CSDIAppDoc* CSDIAppView::GetDocument() const // встроена неотлаженная версия
 
 
 // обработчики сообщений CSDIAppView
+
+
+void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
+	CSDIAppDoc* pDoc = GetDocument();
+	if (!pDoc->m_bIsConnect)
+		return;
+
+	//получим размер клеток, чтобы узнать в какую клетку нажал рользователь
+
+	CBitmap bitmap;
+	bitmap.LoadBitmap(IDB_BITMAP_SHIP);
+	BITMAP BitMap;
+	bitmap.GetBitmap(&BitMap);
+
+	int cellSize = BitMap.bmWidth; //размер клетки в пикселях
+	int aquaSize = BitMap.bmWidth * 10 + 9; //размер поля акватории в пикселях (+ отступы)
+	CRect rect;
+	GetClientRect(rect);
+	int paddingHeight = (rect.Height() - cellSize * 10) / 2; //отступы по вертикали
+	int paddingWidth = (rect.Width() - cellSize * 10) / 2; //отступы по горизонтали
+
+	//проверка, что пользователь кликнул не в поле
+	if ((point.x - paddingWidth) < 0 || (point.x - paddingWidth) > aquaSize || (point.y - paddingHeight) < 0 || (point.y - paddingHeight) > aquaSize)
+		return;
+
+	//определение клетки, на которую пользователь кликнул
+	int letter = (point.x - paddingWidth) / (cellSize + 1);
+	int num = (point.y - paddingHeight) / (cellSize + 1);
+	CView::OnLButtonDblClk(nFlags, point);
+}

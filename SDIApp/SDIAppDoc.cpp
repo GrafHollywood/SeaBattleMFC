@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include <winsock.h>
+#include <thread>
 // SHARED_HANDLERS можно определить в обработчиках фильтров просмотра реализации проекта ATL, эскизов
 // и поиска; позволяет совместно использовать код документа в данным проекте.
 #ifndef SHARED_HANDLERS
@@ -76,36 +77,36 @@ BOOL CSDIAppDoc::OnNewDocument()
 
 // сериализация CSDIAppDoc
 
-void CSDIAppDoc::Serialize(CArchive& ar)
-{
-	/*if (ar.IsStoring())
-	{
-		// TODO: добавьте код сохранения
-		size_t count = m_Points.size();
-		ar << count;
-
-		for (size_t i = 0; i < count; i++)
-		{
-			ar << m_Points[i].x;
-			ar << m_Points[i].y;
-		}
-	}
-	else
-	{
-		// TODO: добавьте код загрузки
-		size_t count;
-		ar >> count;
-
-		m_Points.clear();
-		for (size_t i = 0; i < count; i++)
-		{
-			pt point;
-			ar >> point.x;
-			ar >> point.y;
-			m_Points.push_back(point);
-		}
-	}*/
-}
+//void CSDIAppDoc::Serialize(CArchive& ar)
+//{
+//	/*if (ar.IsStoring())
+//	{
+//		// TODO: добавьте код сохранения
+//		size_t count = m_Points.size();
+//		ar << count;
+//
+//		for (size_t i = 0; i < count; i++)
+//		{
+//			ar << m_Points[i].x;
+//			ar << m_Points[i].y;
+//		}
+//	}
+//	else
+//	{
+//		// TODO: добавьте код загрузки
+//		size_t count;
+//		ar >> count;
+//
+//		m_Points.clear();
+//		for (size_t i = 0; i < count; i++)
+//		{
+//			pt point;
+//			ar >> point.x;
+//			ar >> point.y;
+//			m_Points.push_back(point);
+//		}
+//	}*/
+//}
 
 #ifdef SHARED_HANDLERS
 
@@ -234,28 +235,40 @@ bool CSDIAppDoc::ConnectServer(int port)
 
 void CSDIAppDoc::OnBegin()
 {
-	//m_dPlaceShipDlg.DoModal();
 	// TODO: добавьте свой код обработчика команд
 	if (!ConnectServer(10000))
 		return;
 
-	MessageBox(NULL, _T("Успешное подключение. Ожидание противника."), _T("Подключено"), NULL);
+	//MessageBox(NULL, _T("Успешное подключение. Ожидание противника."), _T("Подключено"), NULL);
+	thread th(WaitEnemyConnect, m_Socket, this);
+	th.detach();
+	//char baf[1024] = "4(A4,B4,C4,D4)";
+	//send(m_Socket, baf, 1024, 0);
 
+	//расстановка кораблей
+	//m_dPlaceShipDlg.DoModal();
+
+	//начинаем играть
+	//DoPlay();
+}
+
+void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
+{
+	// TODO: Добавьте сюда код реализации.
 	//ожидание ответа от сервера, что соперник найдет и нужно расставлять корабли
 	char buf[1024];
 	CString string;
-	while (recv(m_Socket, buf, sizeof(buf), 0))
+	while (recv((SOCKET)mSocket, buf, sizeof(buf), MSG_PEEK))
 	{
 		string = buf;
 		if ((string == "Расставляйте корабли!"))
 		{
-			MessageBox(NULL, _T("Расставляйте корабли!"), _T("Рассталяйте"), NULL);
+			if (pDoc->m_dAcceprDlg.DoModal() == IDOK)
+			{
+				pDoc->m_bIsConnect = true;
+			}
 			break;
 		}
-		MessageBox(NULL, _T("Противник найден, он расставляет корабли"), _T("Ждите"), NULL);
 	}
-
-	//char baf[1024] = "4(A4,B4,C4,D4)";
-	//send(m_Socket, baf, 1024, 0);
-	m_dPlaceShipDlg.DoModal();
+	return;
 }

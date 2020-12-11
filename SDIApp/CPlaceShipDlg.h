@@ -42,9 +42,6 @@ public:
 	CString m_sOut;
 	int LetterToCoord(char letter);
 	char CoordToLetter(int coord);
-	int n4size = 1,
-		n3size = 2,
-		n2size = 3,
-		n1size = 4;
 	virtual void OnCancel();
+	virtual BOOL OnInitDialog();
 };
