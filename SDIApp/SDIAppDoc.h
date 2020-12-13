@@ -13,6 +13,7 @@
 #define CELL_SHIP 1
 #define CELL_SHOT 2
 #define CELL_MISS 3
+#define CELL_SELECTED 4
 
 using namespace std;
 
@@ -36,6 +37,7 @@ public:
 
 	int m_iShip4 = 0, m_iShip3 = 0, m_iShip2 = 0, m_iShip1 = 0; //кол-во кораблей на поле
 	bool m_bIsConnect = false;
+	bool m_bIsShipPlace = false;
 // Операции
 public:
 
@@ -70,4 +72,5 @@ public:
 	bool ConnectServer(int port);
 	afx_msg void OnBegin();
 	static void WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc);
+	afx_msg void OnPlaceship();
 };

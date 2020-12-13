@@ -89,6 +89,8 @@ IDB_BITMAP_SEA          BITMAP                  "res\\bitmap2.bmp"
 
 IDB_BITMAP_MISS         BITMAP                  "res\\bmp00004.bmp"
 
+IDB_BITMAP_SELECTED     BITMAP                  "res\\bitmap_s.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -152,6 +154,7 @@ BEGIN
     POPUP "&Игра"
     BEGIN
         MENUITEM "&Начать",                     ID_BEGIN
+        MENUITEM "Расстановка",                 ID_PLACESHIP
     END
 END
 
@@ -212,13 +215,12 @@ BEGIN
     CTEXT           "Поставьте корабль",IDC_STATIC_OUT,209,44,125,53,SS_CENTERIMAGE
 END
 
-IDD_ACCEPT_DLG DIALOGEX 0, 0, 149, 87
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Противник найден"
+IDD_ACCEPT_DLG DIALOGEX 0, 0, 150, 87
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_BORDER | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "ПРИНЯТЬ",IDOK,7,41,134,39
-    CTEXT           "ВАША ИГРА ГОТОВА",IDC_STATIC,7,7,134,25,SS_CENTERIMAGE
+    DEFPUSHBUTTON   "ПРИНЯТЬ",IDOK,7,41,136,39
+    CTEXT           "ВАША ИГРА ГОТОВА",IDC_STATIC,7,7,136,25,SS_CENTERIMAGE
 END
 
 
@@ -288,7 +290,7 @@ BEGIN
     IDD_ACCEPT_DLG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 142
+        RIGHTMARGIN, 143
         TOPMARGIN, 7
         BOTTOMMARGIN, 80
     END

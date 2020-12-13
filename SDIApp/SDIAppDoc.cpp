@@ -27,6 +27,7 @@ IMPLEMENT_DYNCREATE(CSDIAppDoc, CDocument)
 BEGIN_MESSAGE_MAP(CSDIAppDoc, CDocument)
 	//	ON_COMMAND(AFX_ID_PREVIEW_PREV, &CSDIAppDoc::OnAfxIdPreviewPrev)
 	ON_COMMAND(ID_BEGIN, &CSDIAppDoc::OnBegin)
+	ON_COMMAND(ID_PLACESHIP, &CSDIAppDoc::OnPlaceship)
 END_MESSAGE_MAP()
 
 
@@ -244,12 +245,6 @@ void CSDIAppDoc::OnBegin()
 	th.detach();
 	//char baf[1024] = "4(A4,B4,C4,D4)";
 	//send(m_Socket, baf, 1024, 0);
-
-	//расстановка кораблей
-	//m_dPlaceShipDlg.DoModal();
-
-	//начинаем играть
-	//DoPlay();
 }
 
 void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
@@ -258,7 +253,7 @@ void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
 	//ожидание ответа от сервера, что соперник найдет и нужно расставлять корабли
 	char buf[1024];
 	CString string;
-	while (recv((SOCKET)mSocket, buf, sizeof(buf), MSG_PEEK))
+	while (recv((SOCKET)mSocket, buf, sizeof(buf), 0))
 	{
 		string = buf;
 		if ((string == "Расставляйте корабли!"))
@@ -271,4 +266,18 @@ void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
 		}
 	}
 	return;
+}
+
+void CSDIAppDoc::OnPlaceship()
+{
+	// TODO: добавьте свой код обработчика команд
+	if (m_bIsConnect)
+	{
+		m_dPlaceShipDlg.DoModal();
+		m_bIsShipPlace = true;
+	}
+	else
+	{
+		MessageBox(NULL, _T("Противник еще не найден!"), _T("Ошибка"), MB_ICONWARNING);
+	}
 }

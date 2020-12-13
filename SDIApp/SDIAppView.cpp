@@ -152,14 +152,16 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			for (int j = 0; j < 10; j++)
 			{
 				CBitmap bitmap;
-				if (pDoc->m_MyAqua[i][j] == CELL_SHIP)
+				if (pDoc->m_EnemyAqua[i][j] == CELL_SHIP)
 					bitmap.LoadBitmap(IDB_BITMAP_SHIP);
-				else if (pDoc->m_MyAqua[i][j] == CELL_EMPTY)
+				else if (pDoc->m_EnemyAqua[i][j] == CELL_EMPTY)
 					bitmap.LoadBitmap(IDB_BITMAP_SEA);
-				else if (pDoc->m_MyAqua[i][j] == CELL_MISS)
+				else if (pDoc->m_EnemyAqua[i][j] == CELL_MISS)
 					bitmap.LoadBitmap(IDB_BITMAP_MISS);
-				else if (pDoc->m_MyAqua[i][j] == CELL_SHOT)
+				else if (pDoc->m_EnemyAqua[i][j] == CELL_SHOT)
 					bitmap.LoadBitmap(IDB_BITMAP_BANG);
+				else if (pDoc->m_EnemyAqua[i][j] == CELL_SELECTED)
+					bitmap.LoadBitmap(IDB_BITMAP_SELECTED);
 
 				CDC memdc;
 				memdc.CreateCompatibleDC(pDC);
@@ -167,36 +169,13 @@ void CSDIAppView::OnDraw(CDC* pDC)
 
 				BITMAP BitMap;
 				bitmap.GetBitmap(&BitMap);
-				pDC->BitBlt(paddingWidth + i * (BitMap.bmWidth + 1), paddingHeight + j * (BitMap.bmHeight + 1), BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
-
+				pDC->BitBlt(paddingWidth + j * (BitMap.bmWidth + 1), paddingHeight + i * (BitMap.bmHeight + 1), BitMap.bmWidth, BitMap.bmHeight, &memdc, 0, 0, SRCCOPY);
 				pDC->SelectObject(oldbmp);
 			}
 		}
 
 	}
-
-	//pDC->TextOutW(paddingWidth, paddingHeight, _T("A"));
 }
-
-
-// печать CSDIAppView
-
-BOOL CSDIAppView::OnPreparePrinting(CPrintInfo* pInfo)
-{
-	// подготовка по умолчанию
-	return DoPreparePrinting(pInfo);
-}
-
-void CSDIAppView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
-{
-	// TODO: добавьте дополнительную инициализацию перед печатью
-}
-
-void CSDIAppView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
-{
-	// TODO: добавьте очистку после печати
-}
-
 
 // диагностика CSDIAppView
 
@@ -226,11 +205,17 @@ void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
 	CSDIAppDoc* pDoc = GetDocument();
-	if (!pDoc->m_bIsConnect)
+	//проверка что игрок подключен и готов играть
+	if (!pDoc->m_bIsConnect && !pDoc->m_bIsShipPlace)
 		return;
 
-	//получим размер клеток, чтобы узнать в какую клетку нажал рользователь
+	if (m_bShipsDraw == IS_DRAW_SHIP)
+	{
+		MessageBox(L"¬ —¬ќ® ѕќЋ≈ Ќ≈Ћ№«я —“–≈Ћя“№!!!");
+		return;
+	}
 
+	//получим размер клеток, чтобы узнать в какую клетку нажал рользователь
 	CBitmap bitmap;
 	bitmap.LoadBitmap(IDB_BITMAP_SHIP);
 	BITMAP BitMap;
@@ -240,6 +225,7 @@ void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	int aquaSize = BitMap.bmWidth * 10 + 9; //размер пол€ акватории в пиксел€х (+ отступы)
 	CRect rect;
 	GetClientRect(rect);
+
 	int paddingHeight = (rect.Height() - cellSize * 10) / 2; //отступы по вертикали
 	int paddingWidth = (rect.Width() - cellSize * 10) / 2; //отступы по горизонтали
 
@@ -250,5 +236,8 @@ void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	//определение клетки, на которую пользователь кликнул
 	int letter = (point.x - paddingWidth) / (cellSize + 1);
 	int num = (point.y - paddingHeight) / (cellSize + 1);
+	
+	pDoc->m_EnemyAqua[num][letter] = CELL_SELECTED;
+	Invalidate(FALSE);
 	CView::OnLButtonDblClk(nFlags, point);
 }
