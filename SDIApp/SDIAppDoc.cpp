@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include <winsock.h>
 #include <thread>
+#include <string>
 // SHARED_HANDLERS можно определить в обработчиках фильтров просмотра реализации проекта ATL, эскизов
 // и поиска; позволяет совместно использовать код документа в данным проекте.
 #ifndef SHARED_HANDLERS
@@ -28,6 +29,10 @@ BEGIN_MESSAGE_MAP(CSDIAppDoc, CDocument)
 	//	ON_COMMAND(AFX_ID_PREVIEW_PREV, &CSDIAppDoc::OnAfxIdPreviewPrev)
 	ON_COMMAND(ID_BEGIN, &CSDIAppDoc::OnBegin)
 	ON_COMMAND(ID_PLACESHIP, &CSDIAppDoc::OnPlaceship)
+	ON_COMMAND(ID_SHOT, &CSDIAppDoc::OnShot)
+	ON_UPDATE_COMMAND_UI(ID_BEGIN, &CSDIAppDoc::OnUpdateBegin)
+	ON_UPDATE_COMMAND_UI(ID_SHOT, &CSDIAppDoc::OnUpdateShot)
+	ON_UPDATE_COMMAND_UI(ID_PLACESHIP, &CSDIAppDoc::OnUpdatePlaceship)
 END_MESSAGE_MAP()
 
 
@@ -240,17 +245,94 @@ void CSDIAppDoc::OnBegin()
 	if (!ConnectServer(10000))
 		return;
 
-	//MessageBox(NULL, _T("Успешное подключение. Ожидание противника."), _T("Подключено"), NULL);
 	thread th(WaitEnemyConnect, m_Socket, this);
 	th.detach();
-	//char baf[1024] = "4(A4,B4,C4,D4)";
-	//send(m_Socket, baf, 1024, 0);
+}
+
+void CSDIAppDoc::OnPlaceship()
+{
+	// TODO: добавьте свой код обработчика команд
+	if (m_bIsConnect)
+	{
+		m_dPlaceShipDlg.DoModal();
+		thread th(WaitEnemyPlaceShip, m_Socket, this);
+		th.detach();
+	}
+	else
+	{
+		MessageBox(NULL, _T("Противник еще не найден!"), _T("Ошибка"), MB_ICONWARNING);
+	}
+}
+
+
+void CSDIAppDoc::OnShot()
+{
+	// TODO: добавьте свой код обработчика команд
+	if (!m_bIsConnect)
+	{
+		MessageBox(NULL, _T("Противник еще не найден!"), _T("Ошибка"), MB_ICONWARNING);
+		return;
+	}
+	if (!m_bIsShipPlace)
+	{
+		MessageBox(NULL, _T("Вы или Ваш противник не расставил свои корабли"), _T("Ошибка"), MB_ICONWARNING);
+		return;
+	}
+	if (!m_bIsYouMove)
+	{
+		MessageBox(NULL, _T("Ход противника"), _T("Ошибка"), MB_ICONWARNING);
+		return;
+	}
+	if (!m_bIsReadyShot)
+	{
+		MessageBox(NULL, _T("Вы не готовы стрелять! Выберите куда хотите выстрелить"), _T("Ошибка"), MB_ICONWARNING);
+		return;
+	}
+
+	//отправка запроса
+	char str[32];
+	sprintf(str, "%c%i",
+		m_dPlaceShipDlg.CoordToLetter(m_iSelectX),
+		m_iSelectY + 1);
+	string request = str;
+	send(m_Socket, request.c_str(), request.size() + 1, 0);
+
+	//получение ответа
+	char buff[1024];
+	recv(m_Socket, &buff[0], sizeof(buff), 0);
+	string response = buff;
+
+	if (response == "Попадание!")
+	{
+		m_EnemyAqua[m_iSelectY][m_iSelectX] = CELL_SHOT;
+	}
+	else if (response == "Мимо(")
+	{
+		m_EnemyAqua[m_iSelectY][m_iSelectX] = CELL_MISS;
+		m_bIsYouMove = false;
+	}
+	else if (response == "Корабль потоплен!")
+	{
+		m_EnemyAqua[m_iSelectY][m_iSelectX] = CELL_SHOT;
+		if (CheckEndGame())
+		{
+			send(m_Socket, "OK", 2, 0);
+			m_bIsEndGame = true;
+		}
+	}
+
+	thread th(ChechMove, m_Socket, this);
+	th.detach();
+
+	m_iSelectY = m_iSelectX = NULL;
+	m_pView->Invalidate(FALSE);
+	m_bIsReadyShot = false;
 }
 
 void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
 {
 	// TODO: Добавьте сюда код реализации.
-	//ожидание ответа от сервера, что соперник найдет и нужно расставлять корабли
+	//ожидание ответа от сервера, что соперник найден и нужно расставлять корабли
 	char buf[1024];
 	CString string;
 	while (recv((SOCKET)mSocket, buf, sizeof(buf), 0))
@@ -268,16 +350,110 @@ void CSDIAppDoc::WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc)
 	return;
 }
 
-void CSDIAppDoc::OnPlaceship()
+void CSDIAppDoc::WaitEnemyPlaceShip(SOCKET mSocket, CSDIAppDoc* pDoc)
 {
-	// TODO: добавьте свой код обработчика команд
-	if (m_bIsConnect)
+	// TODO: Добавьте сюда код реализации.
+	if (pDoc->CheckEndGame())
 	{
-		m_dPlaceShipDlg.DoModal();
-		m_bIsShipPlace = true;
+		pDoc->m_bIsEndGame = true;
+		return;
 	}
-	else
+	char buf[1024];
+	CString string;
+	while (recv(mSocket, buf, sizeof(buf), 0))
 	{
-		MessageBox(NULL, _T("Противник еще не найден!"), _T("Ошибка"), MB_ICONWARNING);
+		string = buf;
+		if ((string == "Ваш ход!"))
+		{
+			MessageBox(NULL, _T("Выберите место куда будете стрелять и нажмите на кнопку, чтобы выстрелить"), _T("Противник расставил корабли"), MB_OK);
+			pDoc->m_bIsShipPlace = true;
+			pDoc->m_bIsYouMove = true;
+			break;
+		}
+	}
+}
+
+
+// проверяет ответы от сервера на завершение игры (true - завершение игры)
+bool CSDIAppDoc::CheckEndGame()
+{
+	// TODO: Добавьте сюда код реализации.
+	if (m_bIsEndGame)
+		return true;
+
+	char buf[1024];
+	CString string;
+	recv(m_Socket, buf, sizeof(buf), MSG_PEEK);
+	string = buf;
+	if ((string == "Вы выиграли"))
+	{
+		MessageBox(NULL, _T("ВЫ ВЫИГРАЛИ!!!"), _T("ПОБЕДА!!"), MB_OK);
+		return true;
+	}
+	if ((string == "Вы проиграли("))
+	{
+		MessageBox(NULL, _T("ВЫ ПРОИГРАЛИ((("), _T("ПОРАЖЕНИЕ"), MB_OK);
+		return true;
+	}
+
+	if ((string == "Ваш ход!"))
+	{
+		m_bIsYouMove = true;
+		return false;
+	}
+	return false;
+
+}
+
+
+void CSDIAppDoc::ChechMove(SOCKET mSocket, CSDIAppDoc* pDoc)
+{
+	// TODO: Добавьте сюда код реализации.
+	if (pDoc->CheckEndGame())
+	{
+		pDoc->m_bIsEndGame = true;
+		return;
+	}
+	char buf[1024];
+	CString string;
+	while (recv(mSocket, buf, sizeof(buf), 0))
+	{
+		string = buf;
+		if ((string == "Ваш ход!"))
+		{
+			MessageBox(NULL, _T("Выберите место куда будете стрелять и нажмите на кнопку, чтобы выстрелить"), _T("Ваш ход"), MB_OK);
+			pDoc->m_bIsYouMove = true;
+			break;
+		}
+	}
+}
+
+
+void CSDIAppDoc::OnUpdateBegin(CCmdUI* pCmdUI)
+{
+	// TODO: добавьте свой код обработчика ИП обновления команд
+	if (m_bIsEndGame)
+	{
+		pCmdUI->Enable(false);
+	}
+}
+
+
+void CSDIAppDoc::OnUpdateShot(CCmdUI* pCmdUI)
+{
+	// TODO: добавьте свой код обработчика ИП обновления команд
+	if (m_bIsEndGame)
+	{
+		pCmdUI->Enable(false);
+	}
+}
+
+
+void CSDIAppDoc::OnUpdatePlaceship(CCmdUI* pCmdUI)
+{
+	// TODO: добавьте свой код обработчика ИП обновления команд
+	if (m_bIsEndGame)
+	{
+		pCmdUI->Enable(false);
 	}
 }

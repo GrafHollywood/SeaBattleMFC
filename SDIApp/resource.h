@@ -18,7 +18,6 @@
 #define IDB_BITMAP_BANG_SEA             324
 #define IDB_BITMAP_MISS                 324
 #define IDD_ACCEPT_DLG                  325
-#define IDB_BITMAP_SEA3                 325
 #define IDB_BITMAP_SELECTED             325
 #define IDC_COMBO_TYPE                  1000
 #define IDC_RADIO_HORIZONTAL            1002
@@ -32,13 +31,16 @@
 #define ID_BEGIN                        32772
 #define ID_32773                        32773
 #define ID_PLACESHIP                    32774
+#define ID_32775                        32775
+#define ID_SHOT                         32776
+#define ID_S                            32780
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        327
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_COMMAND_VALUE         32781
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

@@ -38,6 +38,10 @@ public:
 	int m_iShip4 = 0, m_iShip3 = 0, m_iShip2 = 0, m_iShip1 = 0; //кол-во кораблей на поле
 	bool m_bIsConnect = false;
 	bool m_bIsShipPlace = false;
+	bool m_bIsReadyShot = false;
+	bool m_bIsYouMove = false;
+	bool m_bIsEndGame = false;
+	int m_iSelectX, m_iSelectY;
 // Операции
 public:
 
@@ -73,4 +77,12 @@ public:
 	afx_msg void OnBegin();
 	static void WaitEnemyConnect(SOCKET mSocket, CSDIAppDoc* pDoc);
 	afx_msg void OnPlaceship();
+	afx_msg void OnShot();
+	static void WaitEnemyPlaceShip(SOCKET mSocket, CSDIAppDoc* pDoc);
+	// проверяет ответы от сервера на завершение игры
+	bool CheckEndGame();
+	static void ChechMove(SOCKET mSocket, CSDIAppDoc* pDoc);
+	afx_msg void OnUpdateBegin(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateShot(CCmdUI* pCmdUI);
+	afx_msg void OnUpdatePlaceship(CCmdUI* pCmdUI);
 };

@@ -152,9 +152,7 @@ void CSDIAppView::OnDraw(CDC* pDC)
 			for (int j = 0; j < 10; j++)
 			{
 				CBitmap bitmap;
-				if (pDoc->m_EnemyAqua[i][j] == CELL_SHIP)
-					bitmap.LoadBitmap(IDB_BITMAP_SHIP);
-				else if (pDoc->m_EnemyAqua[i][j] == CELL_EMPTY)
+				if (pDoc->m_EnemyAqua[i][j] == CELL_EMPTY)
 					bitmap.LoadBitmap(IDB_BITMAP_SEA);
 				else if (pDoc->m_EnemyAqua[i][j] == CELL_MISS)
 					bitmap.LoadBitmap(IDB_BITMAP_MISS);
@@ -206,7 +204,7 @@ void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
 	CSDIAppDoc* pDoc = GetDocument();
 	//проверка что игрок подключен и готов играть
-	if (!pDoc->m_bIsConnect && !pDoc->m_bIsShipPlace)
+	if (!pDoc->m_bIsConnect || !pDoc->m_bIsShipPlace || !pDoc->m_bIsYouMove)
 		return;
 
 	if (m_bShipsDraw == IS_DRAW_SHIP)
@@ -236,8 +234,30 @@ void CSDIAppView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	//определение клетки, на которую пользователь кликнул
 	int letter = (point.x - paddingWidth) / (cellSize + 1);
 	int num = (point.y - paddingHeight) / (cellSize + 1);
-	
-	pDoc->m_EnemyAqua[num][letter] = CELL_SELECTED;
+
+	//если уже была выбрана клетка, то убираем старую выбранную клетку
+	if (pDoc->m_bIsReadyShot)
+	{
+		if (pDoc->m_EnemyAqua[num][letter] == CELL_EMPTY)
+		{
+			pDoc->m_EnemyAqua[pDoc->m_iSelectY][pDoc->m_iSelectX] = CELL_EMPTY;
+			pDoc->m_iSelectY = num;
+			pDoc->m_iSelectX = letter;
+			pDoc->m_EnemyAqua[pDoc->m_iSelectY][pDoc->m_iSelectX] = CELL_SELECTED;
+		}
+	}
+	else if (pDoc->m_EnemyAqua[num][letter] == CELL_EMPTY)
+	{
+		pDoc->m_EnemyAqua[num][letter] = CELL_SELECTED;
+		pDoc->m_iSelectY = num;
+		pDoc->m_iSelectX = letter;
+	}
+	else
+		return;
+
+
+
 	Invalidate(FALSE);
+	pDoc->m_bIsReadyShot = true;
 	CView::OnLButtonDblClk(nFlags, point);
 }
